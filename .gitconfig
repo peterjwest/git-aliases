@@ -1,0 +1,10 @@
+[alias]
+  pushup = !git push --set-upstream origin `git symbolic-ref --short HEAD`
+  trim = !git fetch --prune && git branch --merged | grep -E -v \"^((\\* )|\\s*(develop|master|main)$)\" | xargs git branch -d
+  pullup = "!f() { BRANCH=$(git symbolic-ref --short HEAD); if [ $# -eq 0 ] || [[ $BRANCH == $1 ]]; then git pull --ff-only; else git fetch origin $1:$1; fi; }; f"
+  restash = "!f() { NAME=$(git stash list | head -n 1 | sed 's/.*\\: //'); git stash pop; git stash save ${@:-$NAME}; }; f"
+  destash = "!f() { NAME=$(git stash list | grep \": $1$\" | cut -d: -f1); if [[ ! -z $NAME ]]; then git stash apply $NAME; else echo \"Stash not found '$1' \"; git --no-pager stash list; fi; }; f"
+  rebranch = "!f() { BRANCH=$(git symbolic-ref --short HEAD); if [ $# -eq 0 ] || [[ $BRANCH == $1 ]]; then git reset --hard origin/$BRANCH; else git branch -f $1 origin/$1; fi; }; f"
+  uncommit = !git reset HEAD~1
+  rebranch = "!f() { BRANCH=$(git symbolic-ref --short HEAD); if [ $# -eq 0 ] || [[ $BRANCH == $1 ]]; then git reset --hard origin/$BRANCH; else git branch -f $1 origin/$1; fi; }; f"
+  agree = "!f() { BRANCH=$(git symbolic-ref --short HEAD); DIFF=$(git diff-tree -p --color origin/$BRANCH $BRANCH); if [[ $DIFF ]]; then echo 'Branch does not match origin 👎'; echo ''; echo \"$DIFF\"; exit 1; else echo 'Branch matches origin 👍'; fi; }; f"
